@@ -3,26 +3,14 @@ pipeline {
     stages {
         stage('build') {
             steps {
+                echo 'Build'
                 sh 'mvn clean install'
             }
         }
         stage('Test') {
             steps {
+                echo 'Sonar Test'
                 sh 'mvn clean verify sonar:sonar -Dsonar.host.url=http://3.12.22.139:9000 -Dsonar.scm.disabled=true -Dsonar.login=6a88962adfb90f9534124dc5dccf3cb6ddbbca94'
-                echo 'Waiting for Quality Gate'
-                sleep 15
-                timeout(time: 1, unit: 'HOURS') {
-                    step {
-                        def qg = waitForQualityGate() 
-                    }
-                    step{
-                        if (qg.status != 'OK') {
-                        echo "Sonar Quality Gate did not Pass, Please Check SonarQube report."
-                        error "Error Code: ${qg.status}"
-                        }
-                    }
-                    
-                }
                 
             }
         }
