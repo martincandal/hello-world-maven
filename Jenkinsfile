@@ -12,11 +12,16 @@ pipeline {
                 echo 'Waiting for Quality Gate'
                 sleep 15
                 timeout(time: 1, unit: 'HOURS') {
-                    def qg = waitForQualityGate()  
-                    if (qg.status != 'OK') {
+                    step {
+                        def qg = waitForQualityGate() 
+                    }
+                    step{
+                        if (qg.status != 'OK') {
                         echo "Sonar Quality Gate did not Pass, Please Check SonarQube report."
                         error "Error Code: ${qg.status}"
                         }
+                    }
+                    
                 }
                 
             }
